@@ -15,13 +15,14 @@ You are welcome to cite the paper if you use the database.
 Qian Liu, Garibaldi Pineda Garca, Evangelos Stromatias,Teresa Gotarredona, and Steve Furber   
 
 
-# Benchmark 1: Supervised Online STDP
+Benchmark 1: Supervised Online STDP
+===================================
 **Input:** Poisson spikes: NE15-Poissonian  
 **Network:** Simple one layer network, fully connected decision layer(50$\times$10), current based LIF-exp neuron  
 **Training:** K-means clusters as preprocessing, Supervised STDP, $18,000$ biological second  
 **Testing:** 5k Hz input rate, 1s per test and 200ms interval silence (in biological time)  
 **Performance:** 92.99% accuracy, 13.82ms latency, 4.17M Sopbs  
 
-| Hardware Platform   | Classification Accuracy (%) | Simulation Time (s)    | Enery (KJ)              | Ref                                                                         |
-|:-------------------:| ---------------------------:| ----------------------:| -----------------------:| ---------------------------------------------------------------------------:|
-| SpiNNaker | 92.99 | 12,000 | 4.92 | |
+| Hardware Platform   | Accuracy (%) | Sim Time (s) | Enery (KJ)  | Ref                                                                         |
+|:-------------------:|:------------:|:------------:|:-----------:|: ---------------------------------------------------------------------------|
+| [SpiNNaker](http://ieeexplore.ieee.org/xpl/abstractAuthors.jsp?arnumber=6750072) | 92.99 | 12,000 | 4.92 | |
