@@ -3,7 +3,7 @@ NE15-MNIST Database
 NE15-MNIST contains four sub datasets:    
 **Poissonian:**   
 The code and example for generating Poissonian spikes from MNIST is located in the folder *Poissonian*.   
-**Focol Rank Code Order:**   
+**Focal Rank Code Order:**   
 The code and example for generating spikes from MNIST using Focol is located in the folder *Focol*.  
 **DVS recorded flashing MNIST digits:**   
 download from: https://goo.gl/ru0fXP   

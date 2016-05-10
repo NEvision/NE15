@@ -18,12 +18,14 @@ from dog import DifferenceOfGaussians
 from convolution import Convolution
 from correlation import Correlation
 
+from __init__ import idx2coord
+
 class Focal():
-'''Filter Overlap Correction ALgorithm, simulates the foveal pit
-    region of the human retina.
-    Created by Basabdatta Sen Bhattacharya.
-    See DOI: 10.1109/TNN.2010.2048339
-'''
+  '''Filter Overlap Correction ALgorithm, simulates the foveal pit
+      region of the human retina.
+      Created by Basabdatta Sen Bhattacharya.
+      See DOI: 10.1109/TNN.2010.2048339
+  '''
 
   def __init__(self):
     self.kernels = DifferenceOfGaussians()
@@ -62,7 +64,7 @@ class Focal():
     #how many non-zero spikes are in the images
     max_cycles = 0
     for i in range(num_images):
-        max_cycles += numpy.sum(img[i] != 0)
+        max_cycles += numpy.sum(spike_images[i] != 0)
 
     total_spikes = max_cycles.copy()
     
@@ -75,10 +77,10 @@ class Focal():
     big_coords = [(0, 0), (0, width), (height, 0), (height, width)]
     for cell_type in range(num_images):
         row, col = big_coords[cell_type]
-        tmp_img = original_img[cell_type].copy()
+        tmp_img = spike_images[cell_type].copy()
         tmp_img[numpy.where(tmp_img == 0)] = -numpy.inf
         big_image[row:row+height, col:col+width] = tmp_img
-    
+
     # Main FoCal loop
     for count in xrange(max_cycles):
         
@@ -86,9 +88,9 @@ class Focal():
         percent = (count*100.)/float(total_spikes-1)
         sys.stdout.write("\rFocal %d%%"%(percent))
         
-        # Get maximum value's index
-        max_idx = numpy.argmax(img_copies)
-        # and its coordinates
+        # Get maximum value's index,
+        max_idx = numpy.argmax(big_image)
+        # its coordinates
         max_coords = numpy.unravel_index(max_idx, big_shape)
         # and the value
         max_val = big_image[max_coords]
@@ -112,7 +114,7 @@ class Focal():
         ordered_spikes.append([local_idx, max_val, cell_type])
         
         # correct surrounding pixels for overlapping kernel influence
-        for overlap_cell_type in range(len(original_img)):
+        for overlap_cell_type in range(len(spike_images)):
             # get equivalent coordinates for each layer
             overlap_idx = self.local_coords_to_global_idx(single_coords, 
                                                          overlap_cell_type, 
@@ -120,11 +122,11 @@ class Focal():
             
             is_max_val_layer = overlap_cell_type == cell_type 
             # c_i = c_i - c_{max}<K_i, K_{max}>
-            self.adjust_with_correlation_g(big_image,
-                                           self.correlations[cell_type]\
-                                                            [overlap_cell_type], 
-                                           overlap_idx, max_val, 
-                                           is_max_val_layer=is_max_val_layer)
+            self.adjust_with_correlation(big_image,
+                                         self.correlations[cell_type]\
+                                                          [overlap_cell_type], 
+                                         overlap_idx, max_val, 
+                                         is_max_val_layer=is_max_val_layer)
 
     
     return ordered_spikes
@@ -191,21 +193,16 @@ class Focal():
     max_knl_row = half_correlation_width + max_img_row_diff
     max_knl_col = half_correlation_width + max_img_col_diff
 
-    img_r = [r for r in range(min_img_row, max_img_row)]
-    img_c = [c for c in range(min_img_col, max_img_col)]
-    
-    knl_r = [r for r in range(min_knl_row, max_knl_row)]
-    knl_c = [c for c in range(min_knl_col, max_knl_col)]
-    
     # c_i = c_i - c_{max}<K_i, K_{max}>
-    img[img_r, img_c] -= max_val*correlation[knl_r, knl_c]
+    img[min_img_row:max_img_row, min_img_col:max_img_col] -= \
+    max_val*correlation[min_knl_row:max_knl_row, min_knl_col:max_knl_col]
         
     # mark any weird pixels as -inf so they don't matter in the search
-    inf_indices = numpy.where(img[img_r, img_c] == numpy.inf)
+    inf_indices = numpy.where(img[min_img_row:max_img_row, min_img_col:max_img_col] == numpy.inf)
     img[inf_indices] = 0
     img[inf_indices] -= numpy.inf
     
-    nan_indices = numpy.where(img[img_r, img_c] == numpy.nan)
+    nan_indices = numpy.where(img[min_img_row:max_img_row, min_img_col:max_img_col] == numpy.nan)
     img[nan_indices] = 0
     img[nan_indices] -= numpy.inf
     
@@ -213,7 +210,7 @@ class Focal():
     if is_max_val_layer:
         img[row, col] -= numpy.inf
     
-    # No need to return, values are affected because I'm doing = and -= ops
+    # No need to return, variables are passed as reference because we're doing = and -= ops
 
 
   def local_coords_to_global_idx(self, coords, cell_type, 
@@ -225,6 +222,7 @@ class Focal():
     global_idx = global_coords[0]*global_img_shape[1] + global_coords[1]
     return global_idx
 
+
   def global_to_single_coords(self, coords, single_shape):
     row_count = coords[0]/single_shape[0]
     col_count = coords[1]/single_shape[1]
@@ -232,6 +230,7 @@ class Focal():
     new_col = coords[1] - single_shape[1]*col_count
     
     return (new_row, new_col)
+
 
   def cell_type_from_global_coords(self, coords, single_shape):
     row_type = coords[0]/single_shape[0]

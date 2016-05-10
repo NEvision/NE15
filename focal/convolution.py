@@ -2,16 +2,19 @@ import numpy
 from scipy.signal import sepfir2d
 
 class Convolution():
-  
-  def __init__():
+  '''
+    Utility class to wrap around different functions for convolution 
+    (i.e. separable convolution)
+  '''
+  def __init__(self):
     pass
     
   def sep_convolution(self, img, horz_k, vert_k, col_keep=1, row_keep=1, mode="full"):
     ''' Separated convolution -
         img      => image to convolve
-        horiz_k  => first convolution kernel
-        vert_k   => second convolution kernel
-        col_keep => which columns are we supposed to calculate (filter with modulo)
+        horiz_k  => first convolution kernel vector (horizontal)
+        vert_k   => second convolution kernel vector (horizontal)
+        col_keep => which columns are we supposed to calculate
         row_keep => which rows are we supposed to calculate
         mode     => if "full": convolve all the image otherwise just valid pixels
     '''
@@ -68,6 +71,7 @@ class Convolution():
 
     return tmp2
 
+
   def dog_sep_convolution(self, img, k, cell_type, originating_function="filter",
                           force_homebrew = False, mode="full"):
     ''' Wrapper for separated convolution for DoG kernels in FoCal, 
@@ -84,7 +88,7 @@ class Convolution():
     '''
 
     if originating_function == "filter":
-        row_keep, col_keep = self.get_subsample_keepers(img, cell_type, k)
+        row_keep, col_keep = self.get_subsample_keepers(cell_type)
     else:
         row_keep, col_keep = 1, 1
 

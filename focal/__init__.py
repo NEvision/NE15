@@ -1,12 +1,16 @@
 from focal import *
+idx_to_name = ["midget_off", "midget_on", "parasol_off", "parasol_on"]
 
-def rgb2gray(self, rgb):
+
+def rgb2gray(rgb):
   #return numpy.int16(numpy.dot(rgb[:,:,:3], [0.299, 0.587, 0.144]))
   #return numpy.floor(numpy.dot(rgb[:,:,:3], [0.299, 0.587, 0.144]))
   return rgb[:,:,0]*0.299 + rgb[:,:,1]*0.587 + rgb[:,:,2]*0.144
 
-def idx2coord(self, idx, width):
+
+def idx2coord(idx, width):
   return (int(idx/width), idx%width)
+
 
 def spike_trains_to_images_g(spike_trains, base_img, num_kernels):
     imgs ={}
@@ -25,8 +29,8 @@ def spike_trains_to_images_g(spike_trains, base_img, num_kernels):
         if val == -numpy.inf:
             print "spike is -inf"
         
-    
     return imgs
+
 
 def plot_images(images, original_img=None, use_abs_vals=False):
     plt.close("all")
@@ -72,7 +76,7 @@ def plot_images(images, original_img=None, use_abs_vals=False):
     plt.show()
     plt.close("all")
 
-    
+
 def save_images(images, prefix, cmap=plt.cm.Greys_r, title_source=idx_to_name): #plt.cm.Paired
     if type(images) == dict:
         num_kernels = len(images.keys())
@@ -106,18 +110,14 @@ def save_images(images, prefix, cmap=plt.cm.Greys_r, title_source=idx_to_name): 
         plt.imshow(images, cmap=plt.cm.Greys_r)
         plt.axis('off')
         plt.savefig(prefix, dpi=300)
-
-
     
     plt.close("all")
 
-    
+
 def count_non_zero(img_set):
     non_zero = 0
     for i in img_set:
         non_zero += numpy.sum(img_set[i] != 0)
     return non_zero
- 
-    
-def convert_image_to_spikes(image):
-  pass
+
+

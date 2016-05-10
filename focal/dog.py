@@ -1,11 +1,23 @@
+import numpy
+
+MIDGET_OFF, MIDGET_ON, PARASOL_OFF, PARASOL_ON = range(4)
+
+KERNEL_TYPES = [MIDGET_OFF, MIDGET_ON, PARASOL_OFF, PARASOL_ON]
+
+KERNEL_STR = {"midget_off":  MIDGET_OFF,  MIDGET_OFF:  "midget_off",
+              "midget_on":   MIDGET_ON,   MIDGET_ON:   "midget_on",
+              "parasol_off": PARASOL_OFF, PARASOL_OFF: "parasol_off",
+              "parasol_on":  PARASOL_ON,  PARASOL_ON:  "parasol_on"} 
+
+
 class DifferenceOfGaussians():
   
   
   def __init__(self):
     self.max_num_kernels = 4
+    self.kernels = None
+    self.full_kernels = None
     self.kernels, self.full_kernels = self.create_all_kernels()
-    self.midget_off, self.midget_on, self.parasol_off, self.parasol_on = range(4)
-    self.idx_to_name = ["midget_off", "midget_on", "parasol_off", "parasol_on"]
 
 
   def __getitem__(self, index):
@@ -28,7 +40,7 @@ class DifferenceOfGaussians():
     gauss2 = numpy.outer(kernels[2], kernels[3])
     full_kernel = gauss1 + gauss2
     
-    return kernels, full_kernels
+    return kernels, full_kernel
 
 
   def create_all_kernels(self):
@@ -41,7 +53,7 @@ class DifferenceOfGaussians():
     return kernels, full_kernels
 
 
-  def diff_of_gauss(is_off_centre, width, sigma, sigma_mult):
+  def diff_of_gauss(self, is_off_centre, width, sigma, sigma_mult):
       half_width = width/2
       x, y = numpy.meshgrid(numpy.arange(-half_width, half_width + 1),
                             numpy.arange(-half_width, half_width + 1))
@@ -88,35 +100,47 @@ class DifferenceOfGaussians():
       final_weight = 1.0/numpy.sqrt(numpy.sqrt(numpy.sum(kernel*kernel)))
       kernel /= numpy.sqrt(numpy.sum(kernel*kernel))
       
-      vertical_c *=
-      return vertical_c*final_weight, horizontal_c*final_weight, vertical_s*final_weight, horizontal_s*final_weight
+      vertical_c   *= final_weight
+      horizontal_c *= final_weight
+      vertical_s   *= final_weight
+      horizontal_s *= final_weight
+      
+      return vertical_c, horizontal_c, vertical_s, horizontal_s
+
 
   def get_params(self, cell_centre_type):
-      if cell_centre_type == midget_off:
-          off_centre = True
-          #surround_width = 5
-          surround_width = 3
-          sigma = 0.8
-          #sigma_mult = 6.5
-          sigma_mult = 6.7
-      elif cell_centre_type == midget_on:
-          off_centre = False
-          surround_width = 11
-          sigma = 1.04
-          #sigma_mult = 6.5
-          sigma_mult = 6.7
-      elif cell_centre_type == parasol_off:
-          off_centre = True
-          surround_width = 61
-          sigma = 8
-          sigma_mult = 4.8
-      elif cell_centre_type == parasol_on:
-          off_centre = False
-          surround_width = 243
-          sigma = 10.4
-          sigma_mult = 4.8
+    '''PARAMETERS FROM:
+       Filter Overlap Correction ALgorithm, simulates the foveal pit
+       region of the human retina.
+       Created by Basabdatta Sen Bhattacharya.
+       See DOI: 10.1109/TNN.2010.2048339
+    '''
+    
+    if cell_centre_type == MIDGET_OFF:
+      off_centre = True
+      #width = 5
+      width = 3
+      sigma = 0.8
+      #sigma_mult = 6.5
+      sigma_mult = 6.7
+    elif cell_centre_type == MIDGET_ON:
+      off_centre = False
+      width = 11
+      sigma = 1.04
+      #sigma_mult = 6.5
+      sigma_mult = 6.7
+    elif cell_centre_type == PARASOL_OFF:
+      off_centre = True
+      width = 61
+      sigma = 8
+      sigma_mult = 4.8
+    elif cell_centre_type == PARASOL_ON:
+      off_centre = False
+      width = 243
+      sigma = 10.4
+      sigma_mult = 4.8
 
-      return off_centre, surround_width, sigma, sigma_mult
+    return off_centre, width, sigma, sigma_mult
 
 
 
