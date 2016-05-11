@@ -50,8 +50,8 @@ class Correlation():
     for cell_type in range(num_kernels):
       correlations[cell_type] = {}
       for overlap_cell_type in range(num_kernels):
-        percent = (cell_type*100. + 1.)/float(num_kernels**2)
-        sys.stdout.write("\rCorrelations cell(%s) %d%%"%(cell_type, percent))
+        percent = ((cell_type*num_kernels+overlap_cell_type)*100. + 1.)/float(num_kernels**2)
+        sys.stdout.write("\rCorrelations cell(%s, %s) %03d%%"%(cell_type, overlap_cell_type, percent))
         sys.stdout.flush()
         
         # using the correlate2d method threw different matrices than
@@ -63,6 +63,8 @@ class Correlation():
         correlations[cell_type][overlap_cell_type] = correlation
         
     pickle.dump( correlations, open( filename, "wb" ) )
+    
+    print("All correlations calculated\n")
 
     return correlations
 
