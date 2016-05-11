@@ -14,4 +14,4 @@ You are welcome to cite the paper if you use the database.
 "Benchmarking Spike-Based Visual Recognition: a Dataset and Evaluation",    
 Qian Liu, Garibaldi Pineda Garca, Evangelos Stromatias,Teresa Gotarredona, and Steve Furber   
 
-We invite you to visit the [Wiki page](https://github.com/NEvision/NE15/wiki) to find further information.
+We invite you to **visit the [Wiki page](https://github.com/NEvision/NE15/wiki)** to find further information.
