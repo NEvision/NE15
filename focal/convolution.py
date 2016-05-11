@@ -34,7 +34,7 @@ class Convolution():
       vertical_range   = xrange(half_k_width, height - half_k_width + 1)
 
     for y in xrange(height):
-        for x in first_horiz_range:
+        for x in horizontal_range:
             if (x - half_img_width)%col_keep != 0:
                 continue
 
@@ -97,10 +97,10 @@ class Convolution():
       right_img = sepfir2d(img.copy(), k[0], k[1])
       left_img  = sepfir2d(img.copy(), k[2], k[3])
     else:
-      right_img = sep_convolution(img, k[0], k[1], col_keep=col_keep, 
-                                  row_keep=row_keep, mode=mode)
-      left_img  = sep_convolution(img, k[2], k[3], col_keep=col_keep, 
-                                  row_keep=row_keep, mode=mode )
+      right_img = self.sep_convolution(img, k[0], k[1], col_keep=col_keep, 
+                                       row_keep=row_keep, mode=mode)
+      left_img  = self.sep_convolution(img, k[2], k[3], col_keep=col_keep, 
+                                       row_keep=row_keep, mode=mode )
 
     conv_img = left_img + right_img
 

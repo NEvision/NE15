@@ -6,19 +6,18 @@ import numpy as np
 import os
 import datetime
 
-# In[19]:
-
 def plot_digit(img_raw):
     img_raw = np.uint8(img_raw)
     plt.figure(figsize=(5,5))
     im = plt.imshow(np.reshape(img_raw,(28,28)))
     plt.colorbar(im, fraction=0.046, pad=0.04)
 
+
 def plot_weight(img_raw):
     plt.figure(figsize=(5,5))
     img = plt.imshow(np.reshape(img_raw,(28,28)))
     plt.colorbar(img, fraction=0.046, pad=0.04)
-# In[20]:
+
 
 def get_train_data():
     file_name = 'train-images.idx3-ubyte'
@@ -37,8 +36,6 @@ def get_train_data():
     return np.double(train_x), np.double(train_y)
 
 
-# In[21]:
-
 def get_test_data():
     file_name = 't10k-images.idx3-ubyte'
     f = open(file_name, "rb")
@@ -56,11 +53,11 @@ def get_test_data():
     return np.double(test_x), np.double(test_y)
 
 
-# In[22]:
-
 def nextTime(rateParameter):
     return -math.log(1.0 - random.random()) / rateParameter
     #random.expovariate(rateParameter)
+
+
 def poisson_generator(rate, t_start, t_stop):
     poisson_train = []
     if rate > 0:
@@ -72,8 +69,6 @@ def poisson_generator(rate, t_start, t_stop):
             last_time += next_isi
     return poisson_train
 
-
-# In[23]:
 
 def mnist_poisson_gen(image_list, image_height, image_width, max_freq, duration, silence):
     if max_freq > 0:
@@ -92,8 +87,6 @@ def mnist_poisson_gen(image_list, image_height, image_width, max_freq, duration,
             
     return spike_source_data
 
-
-# In[101]:
 
 def aerfile_to_spike(file_name, image_size, jaer_size):
     if os.path.exists(file_name):
@@ -133,12 +126,12 @@ def aerfile_to_spike(file_name, image_size, jaer_size):
     else:
         return [], []
 
+
+
 def spike_to_aerfile(spike_source_array_on, spike_source_array_off, file_name, image_size, jaer_size):
     time_stamp = []
     neuron_id = []
-    
-    
-    
+
     num_neuron = image_size * image_size
     pol=[]
     # ON events
@@ -199,3 +192,15 @@ def spike_to_aerfile(spike_source_array_on, spike_source_array_off, file_name, i
     else:
         print 'Output is []'
         return []
+
+
+def raster_plot_spike(spikes):
+    x = []
+    y = []
+    
+    for neuron_id in range(len(spikes)):
+        for t in spikes[neuron_id]:
+            x.append(t)
+            y.append(neuron_id)
+    
+    plt.plot(x, y, '|')

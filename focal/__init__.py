@@ -1,4 +1,6 @@
 from focal import *
+import pylab as plt
+
 idx_to_name = ["midget_off", "midget_on", "parasol_off", "parasol_on"]
 
 
@@ -121,3 +123,45 @@ def count_non_zero(img_set):
     return non_zero
 
 
+def focal_to_spike(spikes, img_shape, spikes_per_time_block=10, start_time=0., time_step=1.):
+    neurons_per_layer = img_shape[0]*img_shape[1]
+    width = img_shape[1]
+    height = img_shape[0]
+    total_width = 2*width
+    total_height = 2*height 
+    spike_array = [[] for i in range(total_height*total_width)]
+    pack_time = start_time
+    spikes_per_block_count = 0
+    for spike in spikes:
+        layer = spike[2]
+        pad_x = width  if layer == 1 or layer == 3 else 0
+        pad_y = height if layer == 2 or layer == 3 else 0
+        
+        loc_idx = spike[0]
+        loc_x = loc_idx%width
+        loc_y = loc_idx/width
+        glb_x = pad_x + loc_x
+        glb_y = pad_y + loc_y
+        glb_idx = glb_y*total_width + glb_x
+        
+        spike_array[glb_idx].append(pack_time)
+        
+        spikes_per_block_count += 1
+        if spikes_per_block_count == spikes_per_time_block:
+            spikes_per_block_count = 0
+            pack_time += time_step
+        
+    return spike_array
+    
+
+def raster_plot_spike(spikes):
+    x = []
+    y = []
+    
+    for neuron_id in range(len(spikes)):
+        for t in spikes[neuron_id]:
+            x.append(t)
+            y.append(neuron_id)
+    
+    plt.plot(x, y, '|')
+    

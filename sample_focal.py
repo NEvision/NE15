@@ -1,12 +1,11 @@
 import scipy
 import numpy
 import pylab
-from focal import Focal, rgb2gray, spike_trains_to_images_g
+from focal import *
 
 # load image
-filename  = "./lena.jpg"
-img = rgb2gray(pylab.imread(filename))
-img = scipy.misc.imresize(img, (256, 256)) # reduce size to improve time
+filename  = "./t10k-images-idx3-ubyte__idx_000__lbl_7_.png"
+img = pylab.imread(filename) #grayscale image
 pylab.figure()
 pylab.imshow(img, cmap="Greys_r")
 
@@ -28,5 +27,12 @@ for k in spike_imgs.keys():
   pylab.subplot(2, 2, i)
   pylab.imshow(spike_imgs[k], cmap="Greys_r")
   i += 1
+
+#convert to spike source array
+pylab.figure()
+spk_src = focal_to_spike(spikes, img.shape, 
+                         spikes_per_time_block=10, 
+                         start_time=0., time_step=1.)
+raster_plot_spike(spk_src)
 
 pylab.show()
