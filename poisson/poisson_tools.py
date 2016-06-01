@@ -1,3 +1,7 @@
+"""poisson_tools.py:
+   Collection of functions to generate Poisson spike trains for the MNIST
+   dataset.
+"""
 import math
 import random
 import sys
@@ -7,6 +11,11 @@ import os
 import datetime
 
 def plot_digit(img_raw):
+    '''Generates a matplotlib plot from the raw pixel array.
+    
+        :param img_raw: array containing the pixels for an MNIST digit, 
+                       should contain 28*28 entries
+        '''
     img_raw = np.uint8(img_raw)
     plt.figure(figsize=(5,5))
     im = plt.imshow(np.reshape(img_raw,(28,28)))
@@ -14,12 +23,23 @@ def plot_digit(img_raw):
 
 
 def plot_weight(img_raw):
+    '''Generates a matplotlib plot from the raw weights array.
+    
+        :param img_raw: array containing the weights for  
+                        pixel-to-neuron connections
+    '''
     plt.figure(figsize=(5,5))
     img = plt.imshow(np.reshape(img_raw,(28,28)))
     plt.colorbar(img, fraction=0.046, pad=0.04)
 
 
 def get_train_data():
+    '''Extracts images and labels from the train files obtained from
+       http://yann.lecun.com/exdb/mnist/
+       
+       :returns: A tuple containing arrays of the images (train_x) and
+                 labels (train_y).
+    '''
     file_name = 'train-images.idx3-ubyte'
     f = open(file_name, "rb")
     magic_number, list_size, image_hight, image_width  = np.fromfile(f, dtype='>i4', count=4)
@@ -37,6 +57,12 @@ def get_train_data():
 
 
 def get_test_data():
+    '''Extracts images and labels from the test files obtained from
+       http://yann.lecun.com/exdb/mnist/
+       
+       :returns: A tuple containing arrays of the images (test_x) and
+                 labels (test_y).
+    '''
     file_name = 't10k-images.idx3-ubyte'
     f = open(file_name, "rb")
     magic_number, list_size, image_hight, image_width  = np.fromfile(f, dtype='>i4', count=4)
@@ -54,11 +80,23 @@ def get_test_data():
 
 
 def nextTime(rateParameter):
+    '''Helper function to Poisson generator
+       :param rateParameter: The rate at which a neuron will fire (Hz)
+       
+       :returns: Time at which the neuron should spike next (seconds)
+    '''
     return -math.log(1.0 - random.random()) / rateParameter
     #random.expovariate(rateParameter)
 
 
 def poisson_generator(rate, t_start, t_stop):
+    '''Poisson train generator
+       :param rate: The rate at which a neuron will fire (Hz)
+       :param t_start: When should the neuron start to fire (milliseconds)
+       :param t_stop: When should the neuron stop firing (milliseconds)
+       
+       :returns: Poisson train firing at rate, from t_start to t_stop (milliseconds)
+    '''
     poisson_train = []
     if rate > 0:
         next_isi = nextTime(rate)*1000.
@@ -71,6 +109,17 @@ def poisson_generator(rate, t_start, t_stop):
 
 
 def mnist_poisson_gen(image_list, image_height, image_width, max_freq, duration, silence):
+    '''Generate Poisson trains for images.
+       :param image_list: MNIST image list,  numpy array of size (num images, width*height)
+       :param image_height: MNIST digit height
+       :param image_width: MNIST digit width
+       :param max_freq: Maximum frequency a neuron representing a pixel can fire (Hz)
+       :param duration: How long should Poisson trains last (milliseconds)
+       :param silence: Time for which no spikes are emmited (milliseconds)
+       
+       :returns: A PyNN SpikeSourceArray-formatted representation of a sequence of
+                 MNIST digits, interleaved by silence periods
+    '''
     if max_freq > 0:
         for i in range(image_list.shape[0]):
             image_list[i] = image_list[i]/sum(image_list[i])*max_freq
@@ -89,6 +138,13 @@ def mnist_poisson_gen(image_list, image_height, image_width, max_freq, duration,
 
 
 def aerfile_to_spike(file_name, image_size, jaer_size):
+    '''Reads an AER file and converts it to a couple of PyNN SpikeSourceArrays.
+        :param file_name: Name of the file to open
+        :param image_size: Width and height of the image
+        :param jaer_size: -Not used?-
+        
+        :returns: A spike array for each polarity
+    '''
     if os.path.exists(file_name):
         f = open(file_name,'r')
         for i in range(5):
@@ -128,7 +184,19 @@ def aerfile_to_spike(file_name, image_size, jaer_size):
 
 
 
-def spike_to_aerfile(spike_source_array_on, spike_source_array_off, file_name, image_size, jaer_size):
+def spike_to_aerfile(spike_source_array_on, spike_source_array_off, 
+                     file_name, image_size, jaer_size):
+    '''Converts and writes SpikeSourceArrays for ON and OFF polarities 
+       into an aer-formated file.
+        :param spike_source_array_on: Array containing ON events for pixels
+        :param spike_source_array_off: Array containing OFF events for pixels
+        :param file_name: Name of file to write to
+        :param image_size: Width and height of image
+        :param jaer_size: -Not used?-
+        
+        :returns: An AER representation of the arrays (times, ids, polarities)
+    '''
+    
     time_stamp = []
     neuron_id = []
 
@@ -194,13 +262,4 @@ def spike_to_aerfile(spike_source_array_on, spike_source_array_off, file_name, i
         return []
 
 
-def raster_plot_spike(spikes):
-    x = []
-    y = []
-    
-    for neuron_id in range(len(spikes)):
-        for t in spikes[neuron_id]:
-            x.append(t)
-            y.append(neuron_id)
-    
-    plt.plot(x, y, '|')
+

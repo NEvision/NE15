@@ -2,6 +2,10 @@ import scipy
 import numpy
 import pylab
 from poisson.poisson_tools import *
+from focal import raster_plot_spike
+
+# Demonstration file for the Poisson tools module. It also includes functions
+# to load all the MNIST images/labels and converting between different formats
 
 # load image
 filename  = "./t10k-images-idx3-ubyte__idx_000__lbl_7_.png"

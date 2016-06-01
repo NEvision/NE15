@@ -11,9 +11,13 @@ KERNEL_STR = {"midget_off":  MIDGET_OFF,  MIDGET_OFF:  "midget_off",
 
 
 class DifferenceOfGaussians():
-  
+  '''Difference of Gaussian kernel generator. Developed to implement FoCal
+  '''
   
   def __init__(self):
+    '''We simulate four layers of Ganglion cells, so we create their
+       kernels here
+    '''
     self.max_num_kernels = 4
     self.kernels = None
     self.full_kernels = None
@@ -21,17 +25,27 @@ class DifferenceOfGaussians():
 
 
   def __getitem__(self, index):
+    '''utility to access the kernels variable directly'''
     return self.kernels[index]
 
 
   @staticmethod
   def kernel_width(self, cell_type):
+    '''Get the kernel width for a particular layer
+       :param cell_type: Index for the cell type in a layer [0 -> 3]
+       :returns: Width for the layer's kernel
+    '''
     is_off_centre, width, sigma, sigma_mult = self.get_params(cell_type)
     return width
 
 
   def create_single_kernel(self, cell_type):
-    
+    '''Generate separable and 2D kernels for a particula layer
+       :param cell_type: Index for the cell type in a layer [0 -> 3]
+       :returns: Separable kernels (two 1D kernel pairs are needed) and 
+                 2D kernel
+
+    '''
     is_off_centre, width, sigma, sigma_mult = self.get_params(cell_type)
     
     kernels = self.diff_of_gauss(is_off_centre, width, sigma, sigma_mult)
@@ -44,6 +58,10 @@ class DifferenceOfGaussians():
 
 
   def create_all_kernels(self):
+    '''Generate separable and 2D kernels for each layer
+        :returns: Dictionaries for separable and 2D kernels, indexed by
+                  integers representing each layer [0 -> 3]
+    '''
     kernels = {}
     full_kernels = {}
 
@@ -54,6 +72,16 @@ class DifferenceOfGaussians():
 
 
   def diff_of_gauss(self, is_off_centre, width, sigma, sigma_mult):
+      '''Compute separated kernels for Difference of Gaussians 2D kernels
+        :param is_off_centre: Whether the simulated ganglion cell has an
+                              OFF-centre (True) or ON-centre (False) behaviour
+        :param width: Width of the kernel
+        :param sigma: `Width` of centre Gaussian
+        :param sigma_mult: `Width` of surround Gaussian = sigma*sigma_mult
+        :returns: Separated kernels for centre (vertical_c, horizontal_c) 
+                  and surround (vertical_s, horizontal_s) components of the
+                  difference of Gaussians
+      '''
       half_width = width/2
       x, y = numpy.meshgrid(numpy.arange(-half_width, half_width + 1),
                             numpy.arange(-half_width, half_width + 1))

@@ -1,20 +1,32 @@
 from focal import *
+from convolution import *
+from correlation import *
+from dog import *
+
 import pylab as plt
 
 idx_to_name = ["midget_off", "midget_on", "parasol_off", "parasol_on"]
 
 
 def rgb2gray(rgb):
-  #return numpy.int16(numpy.dot(rgb[:,:,:3], [0.299, 0.587, 0.144]))
-  #return numpy.floor(numpy.dot(rgb[:,:,:3], [0.299, 0.587, 0.144]))
-  return rgb[:,:,0]*0.299 + rgb[:,:,1]*0.587 + rgb[:,:,2]*0.144
+    '''Convert an RGB array into grayscale
+    '''
+    #return numpy.int16(numpy.dot(rgb[:,:,:3], [0.299, 0.587, 0.144]))
+    #return numpy.floor(numpy.dot(rgb[:,:,:3], [0.299, 0.587, 0.144]))
+    return rgb[:,:,0]*0.299 + rgb[:,:,1]*0.587 + rgb[:,:,2]*0.144
 
 
 def idx2coord(idx, width):
-  return (int(idx/width), idx%width)
+    '''Convert a 1D index into a 2D coordinate'''
+    return (int(idx/width), idx%width)
 
 
-def spike_trains_to_images_g(spike_trains, base_img, num_kernels):
+def spike_trains_to_images_g(spike_trains, base_img, num_kernels=4):
+    '''Transform a FoCal spike set into images
+       :param spike_trains: Focal encoded image
+       :param base_img: Original image, used to get the shape
+       :num_kernels: How many of the representations to convert
+    '''
     imgs ={}
     for cell_type in range(num_kernels):
         imgs[cell_type] = numpy.zeros_like(base_img, dtype=numpy.float32)
@@ -35,6 +47,11 @@ def spike_trains_to_images_g(spike_trains, base_img, num_kernels):
 
 
 def plot_images(images, original_img=None, use_abs_vals=False):
+    '''Create a figure with:
+         - If images is a dictionary: all images in it
+         - If original_img is not None: Two pictures (original and images)
+         - Finally just plot one image (images)
+    '''
     plt.close("all")
     if type(images) == dict:
         #num_kernels = numpy.int(numpy.sqrt(len(images.keys())))
@@ -72,14 +89,17 @@ def plot_images(images, original_img=None, use_abs_vals=False):
         plt.imshow(images, cmap=plt.cm.Greys_r)
         plt.axis('off')
 
-    thismanager = plt.get_current_fig_manager()
-    #thismanager.window.SetPosition((1920, 0))
-    thismanager.window.wm_geometry("+1921+0")
+    # thismanager = plt.get_current_fig_manager()
+    # thismanager.window.SetPosition((1920, 0))
+    # thismanager.window.wm_geometry("+1921+0")
     plt.show()
     plt.close("all")
 
 
 def save_images(images, prefix, cmap=plt.cm.Greys_r, title_source=idx_to_name): #plt.cm.Paired
+    '''Save figures with filename = prefix-cell_type if images is a dictionary
+                         filename = prefix otherwise
+    '''
     if type(images) == dict:
         num_kernels = len(images.keys())
 
@@ -117,6 +137,8 @@ def save_images(images, prefix, cmap=plt.cm.Greys_r, title_source=idx_to_name): 
 
 
 def count_non_zero(img_set):
+    '''Count non-zero pixels in an image set
+    '''
     non_zero = 0
     for i in img_set:
         non_zero += numpy.sum(img_set[i] != 0)
@@ -124,6 +146,13 @@ def count_non_zero(img_set):
 
 
 def focal_to_spike(spikes, img_shape, spikes_per_time_block=10, start_time=0., time_step=1.):
+    '''Convert FoCal-coded spikes into a SpikeSourceArray
+       :param spikes: FoCal, rank order-coded spikes
+       :param img_shape: (Height, Width) of image
+       :param spikes_per_time_block: How many spikes will go into each time bin
+       :param start_time: When did the spikes start appearing (milliseconds)
+       :param time_step: How much time between time bins
+    '''
     neurons_per_layer = img_shape[0]*img_shape[1]
     width = img_shape[1]
     height = img_shape[0]
@@ -154,7 +183,10 @@ def focal_to_spike(spikes, img_shape, spikes_per_time_block=10, start_time=0., t
     return spike_array
     
 
-def raster_plot_spike(spikes):
+def raster_plot_spike(spikes, marker='|', markersize=2):
+    '''Plot PyNN SpikeSourceArrays
+        :param spikes: The array containing spikes
+    '''
     x = []
     y = []
     
@@ -163,5 +195,5 @@ def raster_plot_spike(spikes):
             x.append(t)
             y.append(neuron_id)
     
-    plt.plot(x, y, '|')
+    plt.plot(x, y, marker, markersize=markersize)
     
