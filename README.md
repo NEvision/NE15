@@ -1,34 +1,48 @@
-NE15-MNIST Database
-===================
-NE15-MNIST contains four sub datasets:    
-1) **Poisson:**   
-The code and example for generating Poissonian spikes from MNIST is located in the folder *Poisson*.   
-2) **Focal Rank Code Order:**   
-The code and example for generating spikes from MNIST using Focol is located in the folder *Focol*.  
-3) **DVS recorded flashing MNIST digits:**   
-download from: https://goo.gl/ru0fXP   
-4) **DVS recorded moving MNIST digits:**     
-download from: http://www2.imse-cnm.csic.es/caviar/MNISTDVS.html  
+# Convert Images to Poissonian Spikes
 
-## Examples
+Convert your image data to a Poisson spike source to be able to use with Spiking Neural Networks.
 
-### Shortcut
+<p align="center">
+  <img src="images/pumpkins.jpeg" alt="Pumpkins-RGB" height="100">
+  ->
+  <img src="images/pumpkins_gray.jpeg" alt="Pumpkins-GrayScale" height="100">
+  ->
+  <img src="images/spikes_plot_pumpkins.png" alt="Pumpkins-SpikesPlot" height="100">
+</p>
 
-## References
-Liu, Qian, et al. "Benchmarking spike-based visual recognition: a dataset and evaluation." Frontiers in neuroscience 10 (2016): 496.
 
-You are welcome to cite the paper if you use the database:    
+### Requirements
+I use Python 3.5.2 on Linux, necessary packages are listed below along with their versions for reference.
+* matplotlib (3.0.3)
+* numpy (1.17.3)
+* opencv-python (4.1.1.26)
 
+Run `pip install -r requirements.txt` to install them all.
+
+### Included Files and Their Usage
 ```
-@article{liu2016benchmarking,
-  title={Benchmarking spike-based visual recognition: a dataset and evaluation},
-  author={Liu, Qian and Pineda-Garc{\'\i}a, Garibaldi and Stromatias, Evangelos and Serrano-Gotarredona, Teresa and Furber, Steve B},
-  journal={Frontiers in neuroscience},
-  volume={10},
-  pages={496},
-  year={2016},
-  publisher={Frontiers}
-}
+images-to-spikes/
+├── convert_image_to_spike_array.py
+├── draw_image.py
+├── images
+│   ├── cross.png
+│   ├── horizontal_line_10x.png
+│   ├── horizontal_lines.png
+│   └── t10k-images-idx3-ubyte__idx_000__lbl_7_.png
+├── poisson_tools.py
+└── util_functions.py
 ```
+**convert_image_to_spike_array.py** is the main file. Please see its usage by running it:  `python convert_image_to_spike_array.py`.
 
-For further information please visit [Wiki page](https://github.com/NEvision/NE15/wiki).
+**draw_image.py** enables you to draw your own images by adding simple shapes into it via OpenCV. For more information please see the file.
+
+**images** folder contains three of the images that I generated, and one example from MNIST dataset (t10k-images-idx3-ubyte__idx_000__lbl_7_.png).
+
+**poisson_tools.py** is where the Poisson distribution modelling takes place.
+
+**util_functions.py** includes utility functions of files and images.
+
+## References and Citation
+I only used the Poissonian spikes approach to obtain spike arrays from images in this project. The original project also contains _Focal Rank Code Order_ approach in this sense.
+
+Please refer to the original project's [Wiki page](https://github.com/NEvision/NE15/wiki) for further information.

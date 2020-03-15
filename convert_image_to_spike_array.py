@@ -61,4 +61,4 @@ if __name__ == '__main__':
                 if os.path.isfile( img ):
                     img_to_spike_array( img )
         elif os.path.isfile( img_file_name ):
-            img_to_spike_array( img_file_name, False )
+            img_to_spike_array( img_file_name )
