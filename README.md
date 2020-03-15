@@ -4,9 +4,9 @@ Convert your image data to a Poisson spike source to be able to use with Spiking
 
 <p align="center">
   <img src="images/pumpkins.jpeg" alt="Pumpkins-RGB" height="100">
-  ->
+  <i>&rarr;</i>
   <img src="images/pumpkins_gray.jpeg" alt="Pumpkins-GrayScale" height="100">
-  ->
+  <i>&rarr;</i>
   <img src="images/spikes_plot_pumpkins.png" alt="Pumpkins-SpikesPlot" height="100">
 </p>
 
