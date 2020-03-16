@@ -14,14 +14,12 @@ Convert your image data to a Poisson spike source to be able to use with Spiking
   </table>
 </p>  
 
-<center>
-  <i>
-    The parameters below are used when running <a href="convert_image_to_spike_array.py">convert_image_to_spike_array.py</a> in order to turn <a href="https://unsplash.com/photos/KnZDAYgRsz8">pumpkins</a> into (spike array) pickles. 
-    <br> max_freq = 60000 (Hz)
-    <br> on_duration = 10000 (ms)
-    <br> off_duration = 5000 (ms)
-  </i>
-</center>
+<i>
+  The parameters below are used when running <a href="convert_image_to_spike_array.py">convert_image_to_spike_array.py</a> in order to turn <a href="https://unsplash.com/photos/KnZDAYgRsz8">pumpkins</a> above into a spike array. 
+  <br> max_freq = 60000 (Hz)
+  <br> on_duration = 10000 (ms)
+  <br> off_duration = 5000 (ms)
+</i>
 
 ### Requirements
 I use Python 3.5.2 on Linux, necessary packages are listed below along with their versions for reference.
