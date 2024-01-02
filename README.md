@@ -2,7 +2,7 @@
 
 Convert your image data to a Poisson spike source to be able to use with Spiking Neural Networks.
 
-<p align="center">
+<div align="center">
   <table>
     <tr>
       <td> <img src="images/pumpkins.jpeg" alt="Pumpkins-RGB" height="120"> </td>
@@ -12,7 +12,7 @@ Convert your image data to a Poisson spike source to be able to use with Spiking
       <td> <img src="images/spikes_plot_pumpkins.png" alt="Pumpkins-SpikesPlot" height="135"> </td> 
     </tr>
   </table>
-</p>  
+</div>  
 
 <i>
   The parameters below are used when running <a href="convert_image_to_spike_array.py">convert_image_to_spike_array.py</a> in order to turn <a href="https://unsplash.com/photos/KnZDAYgRsz8">pumpkins</a> above into a spike array. 
@@ -21,7 +21,7 @@ Convert your image data to a Poisson spike source to be able to use with Spiking
   <br> off_duration = 5000 (ms)
 </i>
 
-### Requirements
+## Requirements
 I use Python 3.5.2 on Linux, necessary packages are listed below along with their versions for reference.
 * matplotlib (3.0.3)
 * numpy (1.17.3)
@@ -29,7 +29,7 @@ I use Python 3.5.2 on Linux, necessary packages are listed below along with thei
 
 Run `pip install -r requirements.txt` to install them all.
 
-### Project Files and Their Usage
+## Project Files and Their Usage
 ```
 images-to-spikes/
 ├── convert_image_to_spike_array.py
